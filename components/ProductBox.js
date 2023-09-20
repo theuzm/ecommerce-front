@@ -40,7 +40,7 @@ const Price = styled.div`
     font-weight: 600;
 `;
 
-const Title =styled(Link)`
+const Title = styled(Link)`
     font-weight:normal;
     font-size:1rem;
     margin:0;
