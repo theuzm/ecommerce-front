@@ -39,8 +39,12 @@ const ProductImageBox = styled.div`
   }
 `;
 
+const QuantityLabel = styled.span`
+  padding: 0 3px;
+`;
+
 export default function CartPage() {
-  const { cartProducts } = useContext(CartContext);
+  const { cartProducts, addProduct, removeProduct } = useContext(CartContext);
   const [products, setProducts] = useState([]);
   useEffect(() => {
     if (cartProducts.length > 0) {
@@ -49,6 +53,18 @@ export default function CartPage() {
       });
     }
   }, [cartProducts]);
+  function moreOfThisProduct(id) {
+    addProduct(id);
+  }
+
+  function lessOfThisProduct(id) {
+    removeProduct(id);
+  }
+  let total = 0;
+  for (const productId of cartProducts) {
+    const price = products.find(p => p._id === productId)?.price || 0;
+    total += price;
+  }
   return (
     <>
       <Header />
@@ -76,11 +92,31 @@ export default function CartPage() {
                         {product.title}
                       </ProductInfoCell>
                       <td>
-                        {cartProducts.filter((id) => id === product._id).length}
+                        <Button onClick={() => lessOfThisProduct(product._id)}>
+                          -
+                        </Button>
+                        <QuantityLabel>
+                          {
+                            cartProducts.filter((id) => id === product._id)
+                              .length
+                          }
+                        </QuantityLabel>
+                        <Button onClick={() => moreOfThisProduct(product._id)}>
+                          +
+                        </Button>
                       </td>
-                      <td>preço</td>
+                      <td>
+                        R$
+                        {cartProducts.filter((id) => id === product._id)
+                          .length * product.price}
+                      </td>
                     </tr>
                   ))}
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td>R${total}</td>
+                  </tr>
                 </tbody>
               </Table>
             )}
