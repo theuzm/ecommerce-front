@@ -1,19 +1,20 @@
 import Link from "next/link";
 import styled from "styled-components";
 import Center from "@/components/Center";
-import { useContext, useState } from "react";
-import { CartContext } from "@/components/CartContext";
+import {useContext, useState} from "react";
+import {CartContext} from "@/components/CartContext";
 import BarsIcon from "@/components/icons/Bars";
+import SearchIcon from "@/components/icons/SearchIcon";
 
 const StyledHeader = styled.header`
   background-color: #222;
-  position: sticky;
+  position:sticky;
   top:0;
   z-index:10;
 `;
 const Logo = styled(Link)`
-  color: #fff;
-  text-decoration: none;
+  color:#fff;
+  text-decoration:none;
   position: relative;
   z-index: 3;
 `;
@@ -23,12 +24,9 @@ const Wrapper = styled.div`
   padding: 20px 0;
 `;
 const StyledNav = styled.nav`
-  ${(props) =>
-    props.mobileNavActive
-      ? `
+  ${props => props.mobileNavActive ? `
     display: block;
-  `
-      : `
+  ` : `
     display: none;
   `}
   gap: 15px;
@@ -47,18 +45,22 @@ const StyledNav = styled.nav`
 `;
 const NavLink = styled(Link)`
   display: block;
-  color: #aaa;
-  text-decoration: none;
+  color:#aaa;
+  text-decoration:none;
+  min-width:30px;
   padding: 10px 0;
+  svg{
+    height:20px;
+  }
   @media screen and (min-width: 768px) {
-    padding: 0;
+    padding:0;
   }
 `;
 const NavButton = styled.button`
   background-color: transparent;
   width: 30px;
   height: 30px;
-  border: 0;
+  border:0;
   color: white;
   cursor: pointer;
   position: relative;
@@ -67,15 +69,28 @@ const NavButton = styled.button`
     display: none;
   }
 `;
+const SideIcons = styled.div`
+  display: flex;
+  align-items: center;
+  a{
+    display:inline-block;
+    min-width:20px;
+    color:white;
+    svg{
+      width:14px;
+      height:14px;
+    }
+  }
+`;
 
 export default function Header() {
-  const { cartProducts } = useContext(CartContext);
-  const [mobileNavActive, setMobileNavActive] = useState(false);
+  const {cartProducts} = useContext(CartContext);
+  const [mobileNavActive,setMobileNavActive] = useState(false);
   return (
     <StyledHeader>
       <Center>
         <Wrapper>
-          <Logo href={"/"}>Ecommerce</Logo>
+          <Logo href={'/'}>Ecommerce</Logo>
           <StyledNav mobileNavActive={mobileNavActive}>
             <NavLink href={"/"}>Início</NavLink>
             <NavLink href={"/products"}>Todos os produtos</NavLink>
@@ -83,9 +98,12 @@ export default function Header() {
             <NavLink href={"/account"}>Conta</NavLink>
             <NavLink href={"/cart"}>Carrinho ({cartProducts.length})</NavLink>
           </StyledNav>
-          <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
-            <BarsIcon />
-          </NavButton>
+          <SideIcons>
+            <Link href={'/search'}><SearchIcon /></Link>
+            <NavButton onClick={() => setMobileNavActive(prev => !prev)}>
+              <BarsIcon />
+            </NavButton>
+          </SideIcons>
         </Wrapper>
       </Center>
     </StyledHeader>
