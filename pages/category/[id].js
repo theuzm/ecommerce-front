@@ -97,7 +97,7 @@ export default function CategoryPage({
                   }
                   value={filtersValues.find((f) => f.name === prop.name).value}
                 >
-                  <option value="all">Todos</option>
+                  <option value="all">All</option>
                   {prop.values.map((val) => (
                     <option key={val} value={val}>
                       {val}
@@ -127,7 +127,9 @@ export default function CategoryPage({
         {!loadingProducts && (
           <div>
             {products.length > 0 && <ProductsGrid products={products} />}
-            {products.length === 0 && <div>Desculpe, nenhum produto encontrado</div>}
+            {products.length === 0 && (
+              <div>Desculpe, nenhum produto encontrado</div>
+            )}
           </div>
         )}
       </Center>
