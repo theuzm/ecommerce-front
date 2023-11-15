@@ -153,34 +153,34 @@ export default function AccountPage() {
                 {addressLoaded && session && (
                   <>
                     <Input type="text"
-                           placeholder="Name"
+                           placeholder="Nome"
                            value={name}
                            name="name"
                            onChange={ev => setName(ev.target.value)} />
                     <Input type="text"
-                           placeholder="Email"
+                           placeholder="E-mail"
                            value={email}
                            name="email"
                            onChange={ev => setEmail(ev.target.value)}/>
                     <CityHolder>
                       <Input type="text"
-                             placeholder="City"
+                             placeholder="Cidade"
                              value={city}
                              name="city"
                              onChange={ev => setCity(ev.target.value)}/>
                       <Input type="text"
-                             placeholder="Postal Code"
+                             placeholder="CEP"
                              value={postalCode}
                              name="postalCode"
                              onChange={ev => setPostalCode(ev.target.value)}/>
                     </CityHolder>
                     <Input type="text"
-                           placeholder="Street Address"
+                           placeholder="Endereço"
                            value={streetAddress}
                            name="streetAddress"
                            onChange={ev => setStreetAddress(ev.target.value)}/>
                     <Input type="text"
-                           placeholder="Country"
+                           placeholder="Pais"
                            value={country}
                            name="country"
                            onChange={ev => setCountry(ev.target.value)}/>
@@ -192,10 +192,10 @@ export default function AccountPage() {
                   </>
                 )}
                 {session && (
-                  <Button primary onClick={logout}>Logout</Button>
+                  <Button primary onClick={logout}>Sair</Button>
                 )}
                 {!session && (
-                  <Button primary onClick={login}>Login with Google</Button>
+                  <Button primary onClick={login}>Logar with Google</Button>
                 )}
               </WhiteBox>
             </RevealWrapper>
