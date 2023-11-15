@@ -132,7 +132,7 @@ export default function AccountPage() {
                               <p>Lista Vazia</p>
                             )}
                             {!session && (
-                              <p>Login to add products to your wishlist</p>
+                              <p>Logar com o Google</p>
                             )}
                           </>
                         )}
