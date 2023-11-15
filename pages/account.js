@@ -129,7 +129,7 @@ export default function AccountPage() {
                         {wishedProducts.length === 0 && (
                           <>
                             {session && (
-                              <p>Your wishlist is empty</p>
+                              <p>Lista Vazia</p>
                             )}
                             {!session && (
                               <p>Login to add products to your wishlist</p>
