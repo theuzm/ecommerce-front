@@ -18,16 +18,10 @@ export default function HomePage({featuredProduct,newProducts,wishedNewProducts}
 }
 
 export async function getServerSideProps(ctx) {
-  const featuredProductId = '64e653add0935a853fb03f80';
   await mongooseConnect();
+  const featuredProductId = '64e653add0935a853fb03f80';
   const featuredProduct = await Product.findById(featuredProductId);
   const newProducts = await Product.find({}, null, {sort: {'_id':-1}, limit:10});
-  /* Entender pq ta dando erro 17 minutos*/
-  /* const {user} = await getServerSession(ctx.req, ctx.res, authOptions);
-  const wishedNewProducts = await WishedProduct.find({
-    userEmail:user.email,
-    product: newProducts.map(p => p._id.toString()),
-  }); */
   const {user} = getServerSession(ctx.req, ctx.res, authOptions);
   const wishedNewProducts = await WishedProduct.find()
   return {
