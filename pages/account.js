@@ -13,6 +13,7 @@ import Spinner from "@/components/Spinner";
 import ProductBox from "@/components/ProductBox";
 import Tabs from "@/components/Tabs";
 import SingleOrder from "@/components/SingleOrder";
+import { set } from "lodash";
 
 const ColsWrapper = styled.div`
   display:grid;
@@ -62,23 +63,29 @@ export default function AccountPage() {
     const data = {name,email,city,streetAddress,postalCode,country};
     axios.put('/api/address', data);
   }
+
   useEffect(() => {
     if (!session) {
       return;
     }
     setAddressLoaded(false);
     setWishlistLoaded(false);
-    setOrderLoaded(false);
     axios.get('/api/address').then(response => {
-      setName(response.data.name);
-      setEmail(response.data.email);
-      setCity(response.data.city);
-      setPostalCode(response.data.postalCode);
-      setStreetAddress(response.data.streetAddress);
-      setCountry(response.data.country);
+      setName(response.data?.name);
+      setEmail(response.data?.email);
+      setCity(response.data?.city);
+      setPostalCode(response.data?.postalCode);
+      setStreetAddress(response.data?.streetAddress);
+      setCountry(response.data?.country);
       setAddressLoaded(true);
     });
+
+    axios.get('/api/wishlist').then(response => {
+    setWishedProducts(response.data.map(wp => wp.product));
+    setWishlistLoaded(true);
+    });
   }, [session]);
+
   function productRemovedFromWishlist(idToRemove) {
     setWishedProducts(products => {
       return [...products.filter(p => p._id.toString() !== idToRemove)];
@@ -105,7 +112,7 @@ export default function AccountPage() {
                     {orderLoaded && (
                       <div>
                         {orders.length === 0 && (
-                          <p>Login to see your orders</p>
+                          <p>Faça login para ver seus pedidos</p>
                         )}
                         {orders.length > 0 && orders.map(o => (
                           <SingleOrder {...o} />
@@ -132,7 +139,7 @@ export default function AccountPage() {
                               <p>Lista Vazia</p>
                             )}
                             {!session && (
-                              <p>Logar com o Google</p>
+                              <p>Logar para adcionar os produtos a sua lista</p>
                             )}
                           </>
                         )}
@@ -146,7 +153,7 @@ export default function AccountPage() {
           <div>
             <RevealWrapper delay={100}>
               <WhiteBox>
-                <h2>{session ? 'Account details' : 'Login'}</h2>
+                <h2>{session ? 'Detalhes da Conta' : 'Login'}</h2>
                 {!addressLoaded && (
                   <Spinner fullWidth={true} />
                 )}
@@ -195,7 +202,7 @@ export default function AccountPage() {
                   <Button primary onClick={logout}>Sair</Button>
                 )}
                 {!session && (
-                  <Button primary onClick={login}>Logar with Google</Button>
+                  <Button primary onClick={login}>Logar com o Google</Button>
                 )}
               </WhiteBox>
             </RevealWrapper>
