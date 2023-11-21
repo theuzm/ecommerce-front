@@ -103,7 +103,7 @@ export default function ProductBox({
     if (nextValue === false && onRemoveFromWishlist) {
       onRemoveFromWishlist(_id);
     }
-    axios.post('pages/api/wishlist', {
+    axios.post('/api/wishlist', {
       product: _id,
     }).then(() => {});
     setIsWished(nextValue);

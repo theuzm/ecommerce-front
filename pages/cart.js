@@ -5,9 +5,11 @@ import Header from "@/components/Header";
 import Input from "@/components/Input";
 import Table from "@/components/Table";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { RevealWrapper } from "next-reveal";
 import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+
 
 const ColumnsWrapper = styled.div`
   display: grid;
@@ -78,6 +80,7 @@ export default function CartPage() {
   const [streetAddress, setStreetAddress] = useState("");
   const [country, setCountry] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+
   useEffect(() => {
     if (cartProducts.length > 0) {
       axios.post("/api/cart", { ids: cartProducts }).then((response) => {
@@ -108,7 +111,7 @@ export default function CartPage() {
       setPostalCode(response.data?.postalCode);
       setStreetAddress(response.data?.streetAddress);
       setCountry(response.data?.country);
-      setAddressLoaded(true);
+    
     });
   }, [session]);
   function moreOfThisProduct(id) {
