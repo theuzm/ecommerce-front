@@ -70,6 +70,7 @@ export default function AccountPage() {
     }
     setAddressLoaded(false);
     setWishlistLoaded(false);
+    setOrderLoaded(false);
     axios.get('/api/address').then(response => {
       setName(response.data?.name);
       setEmail(response.data?.email);
@@ -84,7 +85,12 @@ export default function AccountPage() {
       setWishedProducts(response.data.map(wp => wp.product));
       setWishlistLoaded(true);
     });
+    axios.get('/api/orders').then(response => {
+      setOrders(response.data);
+      setOrderLoaded(true);
+    });
   }, [session]);
+
 
   function productRemovedFromWishlist(idToRemove) {
     setWishedProducts(products => {
