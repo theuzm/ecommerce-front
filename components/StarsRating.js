@@ -29,29 +29,32 @@ ${props => !props.disabled && `
  color:${primary};
 `;
 
-export default function StarsRating ({
-    size='md',
-    defaultHowMany=0,disabled,onChange
+export default function StarsRating({
+    size = 'md',
+    defaultHowMany = 0, disabled, onChange
 }) {
-    const [howMany,setHowMany] = useState(defaultHowMany);
-    const five = [1,2,3,4,5];
+    const [howMany, setHowMany] = useState(defaultHowMany);
+    const five = [1, 2, 3, 4, 5];
+
     function handleStarClick(n) {
         if (disabled) {
             return;
         }
         setHowMany(n);
-        onChange(n);
+        if (typeof onChange === 'function') {
+            onChange(n);
+        }
     }
     return (
         <StarsWrapper>
             {five.map(n => (
                 <>
-                    <StarWrapper 
-                    disabled={disabled} 
-                    size={size} 
-                    onClick={() => handleStarClick(n)}>
+                    <StarWrapper
+                        disabled={disabled}
+                        size={size}
+                        onClick={() => handleStarClick(n)}>
                         {howMany >= n ? <StarSolid /> : <StarOutline />}
-                        </StarWrapper>
+                    </StarWrapper>
                 </>
             ))}
         </StarsWrapper>

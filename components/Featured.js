@@ -84,10 +84,10 @@ export default function Featured({product}) {
                   <Title>{product.title}</Title>
                   <Desc>{product.description}</Desc>
                   <ButtonsWrapper>
-                    <ButtonLink href={'/product/'+product._id} outline={1} white={1}>Read more</ButtonLink>
+                    <ButtonLink href={'/product/'+product._id} outline={1} white={1}>Saiba mais</ButtonLink>
                     <FlyingButton white={1} _id={product._id} src={product.images?.[0]}>
                       <CartIcon />
-                      Add to cart
+                      Adiciona ao carrinho
                     </FlyingButton>
                   </ButtonsWrapper>
                 </ContentWrapper>
