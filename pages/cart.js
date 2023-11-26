@@ -229,6 +229,7 @@ export default function CartPage() {
                 />
                 <CityHolder>
                   <Input
+                    
                     type="text"
                     placeholder="Cidade"
                     value={city}

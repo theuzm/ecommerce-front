@@ -10,6 +10,7 @@ import CartIcon from "@/components/icons/CartIcon";
 import FlyingButton from "@/components/FlyingButton";
 import ProductReviews from "@/components/ProductReviews";
 
+
 const ColWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
@@ -28,6 +29,21 @@ const Price = styled.span`
   font-size: 1.4rem;
 `;
 
+const StyledText = styled.p`
+  /* Adicione estilos de formatação de texto aqui */
+  max-width: 600px;
+  white-space: pre-line;
+  text-align: justify; /* Adiciona justificação */
+  color: #333;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 0;
+  margin-right: 0;
+`;
+
+
 export default function ProductPage({product}) {
   return (
     <>
@@ -39,7 +55,7 @@ export default function ProductPage({product}) {
           </WhiteBox>
           <div>
             <Title>{product.title}</Title>
-            <p>{product.description}</p>
+            <StyledText>{product.description}</StyledText>
             <PriceRow>
               <div>
                 <Price>R${product.price}</Price>

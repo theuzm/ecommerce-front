@@ -82,7 +82,6 @@ export default function Featured({product}) {
               <RevealWrapper origin={'left'} delay={0}>
                 <ContentWrapper>
                   <Title>{product.title}</Title>
-                  <Desc>{product.description}</Desc>
                   <ButtonsWrapper>
                     <ButtonLink href={'/product/'+product._id} outline={1} white={1}>Saiba mais</ButtonLink>
                     <FlyingButton white={1} _id={product._id} src={product.images?.[0]}>
