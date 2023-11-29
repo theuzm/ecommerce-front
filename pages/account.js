@@ -91,6 +91,7 @@ export default function AccountPage() {
     });
   }, [session]);
 
+ 
 
   function productRemovedFromWishlist(idToRemove) {
     setWishedProducts(products => {
@@ -137,7 +138,8 @@ export default function AccountPage() {
                       <>
                         <WishedProductsGrid>
                           {wishedProducts.length > 0 && wishedProducts.map(wp => (
-                            <ProductBox key={wp._id} {...wp} wished={true} onRemoveFromWishlist={productRemovedFromWishlist} />
+                            <ProductBox key={wp._id} {...wp} wished={true} onRemoveFromWishlist={productRemovedFromWishlist}
+                             />
                           ))}
                         </WishedProductsGrid>
                         {wishedProducts.length === 0 && (

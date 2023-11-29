@@ -71,34 +71,38 @@ const CityHolder = styled.div`
 
 export default function CartPage() {
   const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
-  const {data:session} = useSession();
+  const { data: session } = useSession();
   const [products, setProducts] = useState([]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [city, setCity] = useState("");
-  const [postalCode, setPostalCode] = useState("");
-  const [streetAddress, setStreetAddress] = useState("");
-  const [country, setCountry] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [city, setCity] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [streetAddress, setStreetAddress] = useState('');
+  const [country, setCountry] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
-
+  const [shippingFee, setShippingFee] = useState(null);
   useEffect(() => {
-    if (cartProducts.length > 0) {
-      axios.post("/api/cart", { ids: cartProducts }).then((response) => {
-        setProducts(response.data);
-      });
+    if (cartProducts?.length >= 0) {
+      axios.post('/api/cart', { ids: cartProducts })
+        .then(response => {
+          console.log('Produtos do carrinho:', response.data);
+          setProducts(response.data);
+        })
+        .catch(error => {
+          console.error('Erro ao carregar produtos do carrinho:', error);
+        });
     } else {
       setProducts([]);
     }
   }, [cartProducts]);
   useEffect(() => {
-    if (typeof window === 'undefinde') {
+    if (typeof window === 'undefined') {
       return;
     }
-    if (window?.location.href.includes('success')){
+    if (window?.location.href.includes('success')) {
       setIsSuccess(true);
       clearCart();
     }
-    
   }, []);
   useEffect(() => {
     if (!session) {
@@ -111,9 +115,11 @@ export default function CartPage() {
       setPostalCode(response.data?.postalCode);
       setStreetAddress(response.data?.streetAddress);
       setCountry(response.data?.country);
-    
+
     });
   }, [session]);
+
+
   function moreOfThisProduct(id) {
     addProduct(id);
   }
@@ -123,20 +129,22 @@ export default function CartPage() {
   }
   async function goToPayment() {
     const response = await axios.post('/api/checkout', {
-      name,email,city,postalCode,streetAddress,country,
+      name, email, city, postalCode, streetAddress, country,
       cartProducts,
     });
     if (response.data.url) {
       window.location = response.data.url;
+      clearCart();
     }
   }
-  let total = 0;
-  for (const productId of cartProducts) {
+  let updatedCartProducts = Array.isArray(cartProducts) ? cartProducts : [];
+  let productsTotal = 0;
+  for (const productId of updatedCartProducts) {
     const price = products.find((p) => p._id === productId)?.price || 0;
-    total += price;
+    productsTotal += price;
   }
 
-  if (isSuccess){
+  if (isSuccess) {
     return (
       <>
         <Header />
@@ -156,8 +164,8 @@ export default function CartPage() {
       <Header />
       <Center>
         <ColumnsWrapper>
-        <RevealWrapper delay={0}>
-          <Box>
+          <RevealWrapper delay={0}>
+            <Box>
               <h2>Carrinho</h2>
               {!cartProducts?.length && <div>Seu carrinho está vazio</div>}
               {products?.length > 0 && (
@@ -170,45 +178,47 @@ export default function CartPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {products.map((product) => (
-                      <tr>
-                        <ProductInfoCell>
-                          <ProductImageBox>
-                            <img src={product.images[0]} alt="" />
-                          </ProductImageBox>
-                          {product.title}
-                        </ProductInfoCell>
-                        <td>
-                          <Button onClick={() => lessOfThisProduct(product._id)}>
-                            -
-                          </Button>
-                          <QuantityLabel>
-                            {
-                              cartProducts.filter((id) => id === product._id)
-                                .length
-                            }
-                          </QuantityLabel>
-                          <Button onClick={() => moreOfThisProduct(product._id)}>
-                            +
-                          </Button>
-                        </td>
-                        <td>
-                          R$
-                          {cartProducts.filter((id) => id === product._id)
-                            .length * product.price}
-                        </td>
-                      </tr>
-                    ))}
+                    {products
+                      .filter((product) => cartProducts.includes(product._id))
+                      .map((product) => (
+                        <tr>
+                          <ProductInfoCell>
+                            <ProductImageBox>
+                              <img src={product.images[0]} alt="" />
+                            </ProductImageBox>
+                            {product.title}
+                          </ProductInfoCell>
+                          <td>
+                            <Button onClick={() => lessOfThisProduct(product._id)}>
+                              -
+                            </Button>
+                            <QuantityLabel>
+                              {
+                                cartProducts.filter((id) => id === product._id)
+                                  .length
+                              }
+                            </QuantityLabel>
+                            <Button onClick={() => moreOfThisProduct(product._id)}>
+                              +
+                            </Button>
+                          </td>
+                          <td>
+                            R$
+                            {cartProducts.filter((id) => id === product._id)
+                              .length * product.price}
+                          </td>
+                        </tr>
+                      ))}
                     <tr>
                       <td></td>
                       <td></td>
-                      <td>R${total}</td>
+                      <td>R${productsTotal}</td>
                     </tr>
                   </tbody>
                 </Table>
               )}
             </Box>
-        </RevealWrapper>
+          </RevealWrapper>
           {!!cartProducts?.length && (
             <RevealWrapper delay={100}>
               <Box>
@@ -229,7 +239,7 @@ export default function CartPage() {
                 />
                 <CityHolder>
                   <Input
-                    
+
                     type="text"
                     placeholder="Cidade"
                     value={city}

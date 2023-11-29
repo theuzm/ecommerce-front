@@ -4,18 +4,25 @@ export const CartContext = createContext({});
 
 export function CartContextProvider({children}) {
   const ls = typeof window !== "undefined" ? window.localStorage : null;
-  const [cartProducts,setCartProducts] = useState();
-  
+  const [cartProducts,setCartProducts] = useState([]);
   useEffect(() => {
-    if (cartProducts?.length >= 0) {
+    if (cartProducts?.length > 0) {
       ls?.setItem('cart', JSON.stringify(cartProducts));
     }
   }, [cartProducts]);
   useEffect(() => {
-    if (ls && ls.getItem('cart')) {
-      setCartProducts(JSON.parse(ls.getItem('cart')));
+    try {
+      const cartData = ls && ls.getItem('cart');
+      if (cartData) {
+        const parsedCart = JSON.parse(cartData);
+        setCartProducts(parsedCart);
+        console.log("Itens recuperados do localStorage:", parsedCart);
+      }
+    } catch (error) {
+      console.error('Falha ao analisar os dados do carrinho:', error);
     }
   }, []);
+  
   function addProduct(productId) {
     setCartProducts(prev => [...prev,productId]);
   }
@@ -28,9 +35,16 @@ export function CartContextProvider({children}) {
       return prev;
     });
   }
-  function clearCart() {
-    setCartProducts([]);
-  }
+
+
+function clearCart() {
+  setCartProducts([]);
+  ls?.removeItem('cart');
+  console.log("Carrinho limpo");
+}
+
+
+
   return (
     <CartContext.Provider value={{cartProducts,setCartProducts,addProduct,removeProduct,clearCart}}>
       {children}

@@ -2,13 +2,14 @@ import styled from "styled-components";
 import Button, { ButtonStyle } from "@/components/Button";
 import CartIcon from "@/components/icons/CartIcon";
 import Link from "next/link";
-import {useContext, useEffect, useState} from "react";
-import {CartContext} from "@/components/CartContext";
+import { useContext, useEffect, useState } from "react";
+import { CartContext } from "@/components/CartContext";
 import { primary } from "@/lib/colors";
 import FlyingButton from "./FlyingButton";
 import HeartOutlineIcon from "./icons/HeartOutlineIcon";
 import HeartSolidIcon from "./icons/HeartSolidIcon";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 const ProductWrapper = styled.div`
   button{
@@ -78,7 +79,7 @@ const WishlistButton = styled.button`
   right: 0;
   background:transparent;
   cursor: pointer;
-  ${props => props.wished ?`
+  ${props => props.wished ? `
    color:red;
    ` : `
    color
@@ -88,49 +89,58 @@ const WishlistButton = styled.button`
     width: 16px;
   }
 `;
- 
+
 
 export default function ProductBox({
-  _id,title,description,price,images,wished=false,
-  onRemoveFromWishlist=()=>{}
+  _id, title, description, price, images, wished = false,
+  onRemoveFromWishlist = () => { },
 }) {
-  const url = '/product/'+_id;
-  const [isWished,setIsWished] = useState(wished);
+  const url = '/product/' + _id;
+  const [isWished, setIsWished] = useState(wished);
+  const { data: session } = useSession();
+
   function addToWishlist(ev) {
     ev.preventDefault();
     ev.stopPropagation();
+
+    if (!session) {
+      window.location.href = "account";
+      return;
+    }
+
     const nextValue = !isWished;
     if (nextValue === false && onRemoveFromWishlist) {
       onRemoveFromWishlist(_id);
     }
     axios.post('/api/wishlist', {
       product: _id,
-    }).then(() => {});
+    }).then(() => { });
     setIsWished(nextValue);
   }
-  return (
-        <ProductWrapper>
-            <WhiteBox href={url}>
-                <div>
-                  <WishlistButton wished={isWished} onClick={addToWishlist}> 
-                    {isWished ? <HeartSolidIcon /> : <HeartOutlineIcon />} 
-                  </WishlistButton>
-                    <img src={images?.[0]} alt=""/>
-                </div>
-            </WhiteBox>
-            <ProductInfoBox>
-                <Title href={url}>{title}</Title>
-                <PriceRow>
-                    <Price>
-                        R${price}
-                    </Price>
-                    <FlyingButton _id={_id} src={images?.[0]}>
-                      +<CartIcon/>
-                    </FlyingButton>
-                </PriceRow>
-                
-            </ProductInfoBox>
 
-        </ProductWrapper>
-    );
+  return (
+    <ProductWrapper>
+      <WhiteBox href={url}>
+        <div>
+          <WishlistButton wished={isWished} onClick={addToWishlist}>
+            {isWished ? <HeartSolidIcon /> : <HeartOutlineIcon />}
+          </WishlistButton>
+          <img src={images?.[0]} alt="" />
+        </div>
+      </WhiteBox>
+      <ProductInfoBox>
+        <Title href={url}>{title}</Title>
+        <PriceRow>
+          <Price>
+            R${price}
+          </Price>
+          <FlyingButton _id={_id} src={images?.[0]}>
+            +<CartIcon />
+          </FlyingButton>
+        </PriceRow>
+
+      </ProductInfoBox>
+
+    </ProductWrapper>
+  );
 }
