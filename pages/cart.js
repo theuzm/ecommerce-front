@@ -1,3 +1,4 @@
+// Importando componentes e módulos necessários
 import Button from "@/components/Button";
 import { CartContext } from "@/components/CartContext";
 import Center from "@/components/Center";
@@ -10,7 +11,7 @@ import { RevealWrapper } from "next-reveal";
 import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 
-
+// Estilizando componentes usando styled-components
 const ColumnsWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
@@ -69,9 +70,15 @@ const CityHolder = styled.div`
   gap: 5px;
 `;
 
+// Componente principal da página do carrinho
 export default function CartPage() {
+  // Utilizando o contexto do carrinho
   const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
+  
+  // Utilizando o hook useSession do NextAuth para obter informações da sessão do usuário
   const { data: session } = useSession();
+  
+  // Estados para armazenar informações do usuário e do carrinho
   const [products, setProducts] = useState([]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -81,6 +88,8 @@ export default function CartPage() {
   const [country, setCountry] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [shippingFee, setShippingFee] = useState(null);
+  
+  // Efeito para carregar os produtos do carrinho quando o carrinho é alterado
   useEffect(() => {
     if (cartProducts?.length >= 0) {
       axios.post('/api/cart', { ids: cartProducts })
@@ -95,6 +104,8 @@ export default function CartPage() {
       setProducts([]);
     }
   }, [cartProducts]);
+  
+  // Efeito para verificar se a compra foi bem-sucedida e limpar o carrinho
   useEffect(() => {
     if (typeof window === 'undefined') {
       return;
@@ -104,6 +115,8 @@ export default function CartPage() {
       clearCart();
     }
   }, []);
+  
+  // Efeito para carregar informações do usuário autenticado
   useEffect(() => {
     if (!session) {
       return;
@@ -115,18 +128,20 @@ export default function CartPage() {
       setPostalCode(response.data?.postalCode);
       setStreetAddress(response.data?.streetAddress);
       setCountry(response.data?.country);
-
     });
   }, [session]);
 
-
+  // Função para aumentar a quantidade de um produto no carrinho
   function moreOfThisProduct(id) {
     addProduct(id);
   }
 
+  // Função para diminuir a quantidade de um produto no carrinho
   function lessOfThisProduct(id) {
     removeProduct(id);
   }
+  
+  // Função para prosseguir para o pagamento
   async function goToPayment() {
     const response = await axios.post('/api/checkout', {
       name, email, city, postalCode, streetAddress, country,
@@ -137,6 +152,8 @@ export default function CartPage() {
       clearCart();
     }
   }
+
+  // Calculando o total dos produtos no carrinho
   let updatedCartProducts = Array.isArray(cartProducts) ? cartProducts : [];
   let productsTotal = 0;
   for (const productId of updatedCartProducts) {
@@ -144,6 +161,7 @@ export default function CartPage() {
     productsTotal += price;
   }
 
+  // Renderização condicional em caso de sucesso na compra
   if (isSuccess) {
     return (
       <>
@@ -159,11 +177,14 @@ export default function CartPage() {
       </>
     );
   }
+
+  // Renderização padrão da página do carrinho
   return (
     <>
       <Header />
       <Center>
         <ColumnsWrapper>
+          {/* Seção de exibição do carrinho */}
           <RevealWrapper delay={0}>
             <Box>
               <h2>Carrinho</h2>
@@ -182,12 +203,15 @@ export default function CartPage() {
                       .filter((product) => cartProducts.includes(product._id))
                       .map((product) => (
                         <tr key={product._id}>
+                          {/* Informações do produto */}
                           <ProductInfoCell>
+                            {/* Caixa de imagem do produto */}
                             <ProductImageBox>
                               <img src={product.images[0]} alt="" />
                             </ProductImageBox>
                             {product.title}
                           </ProductInfoCell>
+                          {/* Controles de quantidade do produto */}
                           <td>
                             <Button onClick={() => lessOfThisProduct(product._id)}>
                               -
@@ -202,6 +226,7 @@ export default function CartPage() {
                               +
                             </Button>
                           </td>
+                          {/* Preço total do produto no carrinho */}
                           <td>
                             R$
                             {cartProducts.filter((id) => id === product._id)
@@ -209,6 +234,7 @@ export default function CartPage() {
                           </td>
                         </tr>
                       ))}
+                    {/* Total geral dos produtos no carrinho */}
                     <tr>
                       <td></td>
                       <td></td>
@@ -219,10 +245,13 @@ export default function CartPage() {
               )}
             </Box>
           </RevealWrapper>
+          
+          {/* Seção de informações da compra */}
           {!!cartProducts?.length && (
             <RevealWrapper delay={100}>
               <Box>
                 <h2>Informações da Compra</h2>
+                {/* Campos de informações do usuário */}
                 <Input
                   type="text"
                   placeholder="Nome"
@@ -237,9 +266,9 @@ export default function CartPage() {
                   name="email"
                   onChange={(ev) => setEmail(ev.target.value)}
                 />
+                {/* Campos de endereço do usuário */}
                 <CityHolder>
                   <Input
-
                     type="text"
                     placeholder="Cidade"
                     value={city}
@@ -268,6 +297,7 @@ export default function CartPage() {
                   name="country"
                   onChange={(ev) => setCountry(ev.target.value)}
                 />
+                {/* Botão para prosseguir para o pagamento */}
                 <Button black block onClick={goToPayment}>
                   Continuar para o pagamento
                 </Button>

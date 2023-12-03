@@ -11,8 +11,9 @@ import HeartSolidIcon from "./icons/HeartSolidIcon";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
+// Estilizações
 const ProductWrapper = styled.div`
-  button{
+  button {
     width: 100%;
     text-align: center;
     justify-content: center;
@@ -29,7 +30,7 @@ const WhiteBox = styled(Link)`
   justify-content: center;
   border-radius: 10px;
   position: relative;
-  img{
+  img {
     max-width: 100%;
     max-height: 80px;
   }
@@ -37,10 +38,10 @@ const WhiteBox = styled(Link)`
 
 const Title = styled(Link)`
   font-weight: normal;
-  font-size:.9rem;
-  color:inherit;
-  text-decoration:none;
-  margin:0;
+  font-size: 0.9rem;
+  color: inherit;
+  text-decoration: none;
+  margin: 0;
 `;
 
 const ProductInfoBox = styled.div`
@@ -54,17 +55,17 @@ const PriceRow = styled.div`
     gap: 5px;
   }
   align-items: center;
-  justify-content:space-between;
-  margin-top:2px;
+  justify-content: space-between;
+  margin-top: 2px;
 `;
 
 const Price = styled.div`
   font-size: 1rem;
-  font-weight:400;
+  font-weight: 400;
   text-align: right;
   @media screen and (min-width: 768px) {
     font-size: 1.2rem;
-    font-weight:600;
+    font-weight: 600;
     text-align: left;
   }
 `;
@@ -77,28 +78,36 @@ const WishlistButton = styled.button`
   position: absolute;
   top: 0;
   right: 0;
-  background:transparent;
+  background: transparent;
   cursor: pointer;
-  ${props => props.wished ? `
-   color:red;
-   ` : `
-   color
-   :black;
+  ${props =>
+    props.wished
+      ? `
+    color: red;
+    `
+      : `
+    color: black;
   `}
-  svg{
+  svg {
     width: 16px;
   }
 `;
 
-
+// Componente principal ProductBox
 export default function ProductBox({
-  _id, title, description, price, images, wished = false,
-  onRemoveFromWishlist = () => { },
+  _id,
+  title,
+  description,
+  price,
+  images,
+  wished = false,
+  onRemoveFromWishlist = () => {},
 }) {
   const url = '/product/' + _id;
   const [isWished, setIsWished] = useState(wished);
   const { data: session } = useSession();
 
+  // Adiciona o produto à lista de desejos
   function addToWishlist(ev) {
     ev.preventDefault();
     ev.stopPropagation();
@@ -112,9 +121,11 @@ export default function ProductBox({
     if (nextValue === false && onRemoveFromWishlist) {
       onRemoveFromWishlist(_id);
     }
+
+    // Envia uma solicitação para adicionar ou remover da lista de desejos
     axios.post('/api/wishlist', {
       product: _id,
-    }).then(() => { });
+    }).then(() => {});
     setIsWished(nextValue);
   }
 
@@ -131,16 +142,12 @@ export default function ProductBox({
       <ProductInfoBox>
         <Title href={url}>{title}</Title>
         <PriceRow>
-          <Price>
-            R${price}
-          </Price>
+          <Price>R${price}</Price>
           <FlyingButton _id={_id} src={images?.[0]}>
             +<CartIcon />
           </FlyingButton>
         </PriceRow>
-
       </ProductInfoBox>
-
     </ProductWrapper>
   );
 }

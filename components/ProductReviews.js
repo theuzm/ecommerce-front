@@ -93,11 +93,11 @@ export default function ProductReviews({product}) {
                 <input 
                 value={title}
                 onChange={ev => setTitle(ev.target.value)}
-                placeholder="Titulo" />
+                placeholder="Título" />
                 <Textarea 
                 value={description}
                 onChange={ev => setDescription(ev.target.value)}
-                placeholder="O que vc achou?Pros?contras?" />
+                placeholder="Nos diga sua experiência com o produto!" />
                 <div>
                     <Button primary onClick={submitReview}>Envie sua avaliação</Button>
                 </div>

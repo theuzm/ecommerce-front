@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Spinner from "@/components/Spinner";
 
+// Estilos estilizados para o componente
 const CategoryHeader = styled.div`
   display: flex;
   align-items: center;
@@ -17,10 +18,12 @@ const CategoryHeader = styled.div`
     font-size: 1.5em;
   }
 `;
+
 const FiltersWrapper = styled.div`
   display: flex;
   gap: 15px;
 `;
+
 const Filter = styled.div`
   background-color: #ddd;
   padding: 5px 10px;
@@ -36,22 +39,27 @@ const Filter = styled.div`
   }
 `;
 
+// Componente principal CategoryPage
 export default function CategoryPage({
   category,
   subCategories,
   products: originalProducts,
 }) {
+  // Valores padrão para ordenação e filtros
   const defaultSorting = "_id-desc";
   const defaultFilterValues = category.properties.map((p) => ({
     name: p.name,
     value: "all",
   }));
+
+  // Estados para armazenar produtos, valores de filtro, ordenação e carregamento
   const [products, setProducts] = useState(originalProducts);
   const [filtersValues, setFiltersValues] = useState(defaultFilterValues);
   const [sort, setSort] = useState(defaultSorting);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [filtersChanged, setFiltersChanged] = useState(false);
 
+  // Função para lidar com a mudança nos valores de filtro
   function handleFilterChange(filterName, filterValue) {
     setFiltersValues((prev) => {
       return prev.map((p) => ({
@@ -61,30 +69,36 @@ export default function CategoryPage({
     });
     setFiltersChanged(true);
   }
+
   useEffect(() => {
     if (!filtersChanged) {
       return;
     }
+
     setLoadingProducts(true);
     const catIds = [category._id, ...(subCategories?.map((c) => c._id) || [])];
     const params = new URLSearchParams();
     params.set("categories", catIds.join(","));
     params.set("sort", sort);
+
     filtersValues.forEach((f) => {
       if (f.value !== "all") {
         params.set(f.name, f.value);
       }
     });
+
     const url = `/api/products?` + params.toString();
     axios.get(url).then((res) => {
       setProducts(res.data);
       setLoadingProducts(false);
     });
   }, [filtersValues, sort, filtersChanged]);
+
   return (
     <>
       <Header />
       <Center>
+        {/* Cabeçalho da categoria com filtros */}
         <CategoryHeader>
           <h1>{category.name}</h1>
           <FiltersWrapper>
@@ -123,6 +137,8 @@ export default function CategoryPage({
             </Filter>
           </FiltersWrapper>
         </CategoryHeader>
+
+        {/* Exibição de produtos ou spinner de carregamento */}
         {loadingProducts && <Spinner fullWidth />}
         {!loadingProducts && (
           <div>
@@ -137,11 +153,13 @@ export default function CategoryPage({
   );
 }
 
+// Função para obter dados do servidor
 export async function getServerSideProps(context) {
   const category = await Category.findById(context.query.id);
   const subCategories = await Category.find({ parent: category._id });
   const catIds = [category._id, ...subCategories.map((c) => c._id)];
   const products = await Product.find({ category: catIds });
+
   return {
     props: {
       category: JSON.parse(JSON.stringify(category)),

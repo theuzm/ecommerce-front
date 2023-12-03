@@ -1,11 +1,12 @@
 import styled from "styled-components";
-import {ButtonStyle} from "@/components/Button";
-import {primary} from "@/lib/colors";
-import {CartContext} from "@/components/CartContext";
-import {useContext, useEffect, useRef, useState} from "react";
+import { ButtonStyle } from "@/components/Button";
+import { primary } from "@/lib/colors";
+import { CartContext } from "@/components/CartContext";
+import { useContext, useEffect, useRef, useState } from "react";
 
+// Estilos estilizados para o componente
 const FlyingButtonWrapper = styled.div`
-  button{
+  button {
     ${ButtonStyle};
     ${props => props.main ? `
       background-color: ${primary};
@@ -21,18 +22,18 @@ const FlyingButtonWrapper = styled.div`
       font-weight:500;
     `}
   }
-  @keyframes fly{
-    100%{
-      top:0;
-      left:65%;
+  @keyframes fly {
+    100% {
+      top: 0;
+      left: 65%;
       opacity: 0;
-      display:none;
+      display: none;
       max-width: 50px;
       max-height: 50px;
     }
   }
-  img{
-    display:none;
+  img {
+    display: none;
     max-width: 100px;
     max-height: 100px;
     opacity: 1;
@@ -43,22 +44,29 @@ const FlyingButtonWrapper = styled.div`
   }
 `;
 
+// Componente principal FlyingButton
 export default function FlyingButton(props) {
-  const {addProduct} = useContext(CartContext);
+  // Obtendo funções do contexto do carrinho
+  const { addProduct } = useContext(CartContext);
+  // Ref para a imagem que voará para o carrinho
   const imgRef = useRef();
+
+  // Função para enviar a imagem para o carrinho com animação
   function sendImageToCart(ev) {
-    if(imgRef.current){
+    if (imgRef.current) {
       imgRef.current.style.display = 'inline-block';
-      imgRef.current.style.left = (ev.clientX-50) + 'px';
-      imgRef.current.style.top = (ev.clientY-50) + 'px';
-    
+      imgRef.current.style.left = (ev.clientX - 50) + 'px';
+      imgRef.current.style.top = (ev.clientY - 50) + 'px';
+
       setTimeout(() => {
-        if(imgRef.current){
-          imgRef.current.style.display = 'none';  
+        if (imgRef.current) {
+          imgRef.current.style.display = 'none';
         }
       }, 1000);
     }
   }
+
+  // Efeito colateral para ajustar o estilo de revelação quando a imagem está completamente visível
   useEffect(() => {
     const interval = setInterval(() => {
       const reveal = imgRef.current?.closest('div[data-sr-id]');
@@ -69,8 +77,10 @@ export default function FlyingButton(props) {
 
     return () => clearInterval(interval);
   }, []);
+
   return (
     <>
+      {/* Componente estilizado do botão com a imagem que voa para o carrinho */}
       <FlyingButtonWrapper
         white={props.white}
         main={props.main}
